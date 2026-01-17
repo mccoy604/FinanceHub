@@ -438,15 +438,28 @@
         }
 
         async function connectToGoogleDrive() {
-            try {
-                const authInstance = window.gapi.auth2.getAuthInstance();
-                await authInstance.signIn();
-                showNotification('Connected to Google Drive!', 'success');
-            } catch (error) {
-                console.error('Sign in error:', error);
-                showNotification('Failed to connect to Google Drive', 'error');
-            }
-        }
+    try {
+        const authInstance = window.gapi.auth2.getAuthInstance();
+        
+        // Use redirect instead of popup
+        await authInstance.signIn({
+            prompt: 'select_account',
+            ux_mode: 'redirect',
+            redirect_uri: window.location.origin
+        });
+        
+        showNotification('Connected to Google Drive!', 'success');
+    } catch (error) {
+        console.error('Sign in error:', error);
+        showNotification('Failed to connect to Google Drive', 'error');
+    }
+}
+```
+
+**Important:** If using redirect mode, also add to "Authorized redirect URIs":
+```
+https://mccoy604.github.io
+https://mccoy604.github.io/FinanceHub/
 
         async function findOrCreateFile() {
             if (fileId) return fileId;
